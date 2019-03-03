@@ -122,11 +122,15 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", err)
 		return
 	}
+	println("Message:")
+	println(message)
 
 	token := os.Getenv("TELEGRAM_TOKEN")
+	println("Token length", len(token))
 
 	// How to get the TELEGRAM_CHAT_ID: https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id
 	chatId := os.Getenv("TELEGRAM_CHAT_ID")
+	println("Chat ID", chatId)
 
 	// Sending the message to Telegram
 	if err := sendMessage(message, token, chatId); err != nil {
