@@ -8,7 +8,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache
-      - run: go build
+      - run: go install
       - save_cache:
           key: dependency-cache
           paths:
