@@ -18,7 +18,8 @@ import (
 // ===================
 
 type Sender struct {
-	Login string
+	Login   string
+	HTMLURL string
 }
 
 type Comment struct {
@@ -33,12 +34,21 @@ type Content struct {
 	Body    string
 }
 
+type Status struct {
+	State   string
+	Message string
+	HTMLURL string
+}
+
+func formatSender(s Sender) string {
+	return fmt.Sprintf("*[%s](%s)*", s.Login, s.HTMLURL)
+}
+
 // Builds up messages that follow a common pattern around a Comment struct.
 // The messages will use a "kind" to identify the event in a humanly readable way,
 // and two structs holding the data coming from the API, a Sender and a Comment.
-// TODO: Perhaps use a template engine.
 func parseComment(kind string, sender Sender, comment Comment) string {
-	return fmt.Sprintf("*%s* commented one %s with:\n\n%s\n\n%s", sender.Login, kind, comment.Body, comment.HTMLURL)
+	return fmt.Sprintf("%s commented one %s with:\n\n%s\n\n%s", formatSender(sender), kind, comment.Body, comment.HTMLURL)
 }
 
 // Builds up messages that have CRUD-like actions
@@ -51,7 +61,11 @@ func parseCRUD(kind string, sender Sender, content Content) string {
 	if content.Body != "" {
 		body = fmt.Sprintf(" Details:\n%s", content.Body)
 	}
-	return fmt.Sprintf("*%s* %s the %s: %s %s%s", sender.Login, content.Action, kind, content.Title, content.HTMLURL, body)
+	return fmt.Sprintf("%s %s the %s: %s %s%s", formatSender(sender), content.Action, kind, content.Title, content.HTMLURL, body)
+}
+
+func parseStatus(sender Sender, status Status) string {
+	return fmt.Sprintf("`%s`: [%s](%s) by %s", status.State, status.Message, status.HTMLURL, formatSender(sender))
 }
 
 // Taken from: https://github.com/go-playground/webhooks/blob/v5/README.md
@@ -68,6 +82,7 @@ func getMessage(r *http.Request, secret string) (string, error) {
 		github.PullRequestEvent,
 		github.IssuesEvent,
 		// Misc
+		github.StatusEvent,
 		github.PingEvent)
 
 	if err != nil {
@@ -83,27 +98,44 @@ func getMessage(r *http.Request, secret string) (string, error) {
 	// Comment events
 	case github.CommitCommentPayload:
 		p := payload.(github.CommitCommentPayload)
-		return parseComment("commit", Sender{Login: p.Sender.Login}, Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}), nil
+		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
+		comment := Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}
+		return parseComment("commit", sender, comment), nil
 	case github.IssueCommentPayload:
 		p := payload.(github.IssueCommentPayload)
-		return parseComment("issue", Sender{Login: p.Sender.Login}, Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}), nil
+		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
+		comment := Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}
+		return parseComment("issue", sender, comment), nil
 	case github.PullRequestReviewCommentPayload:
 		p := payload.(github.PullRequestReviewCommentPayload)
-		return parseComment("pull request", Sender{Login: p.Sender.Login}, Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}), nil
+		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
+		comment := Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}
+		return parseComment("pull request", sender, comment), nil
 
 		// Events that have CRUD-like actions
 	case github.PullRequestReviewPayload:
 		p := payload.(github.PullRequestReviewPayload)
-		return parseCRUD("pull request review", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: p.Review.Body}), nil
+		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
+		content := Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: p.Review.Body}
+		return parseCRUD("pull request review", sender, content), nil
 	case github.PullRequestPayload:
 		p := payload.(github.PullRequestPayload)
+		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
 		body := fmt.Sprintf("Additions: %d Deletions: %d", p.PullRequest.Additions, p.PullRequest.Deletions)
-		return parseCRUD("pull request", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: body}), nil
+		content := Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: body}
+		return parseCRUD("pull request", sender, content), nil
 	case github.IssuesPayload:
 		p := payload.(github.IssuesPayload)
-		return parseCRUD("issue", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.Issue.Title, HTMLURL: p.Issue.HTMLURL}), nil
+		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
+		content := Content{Action: p.Action, Title: p.Issue.Title, HTMLURL: p.Issue.HTMLURL}
+		return parseCRUD("issue", sender, content), nil
 
 		// Misc
+	case github.StatusPayload:
+		p := payload.(github.StatusPayload)
+		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
+		status := Status{State: p.State, Message: p.Commit.Commit.Message, HTMLURL: p.Commit.HTMLURL}
+		return parseStatus(sender, status), nil
 		// Ping is simply so that we can run a minimal test.
 	case github.PingPayload:
 		return "ping", nil
