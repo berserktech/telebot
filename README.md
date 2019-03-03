@@ -1,2 +1,2 @@
-# BerserkTech_GitHub_bot
+# telebot
 Telegram Bot for our repository
