@@ -97,7 +97,8 @@ func getMessage(r *http.Request, secret string) (string, error) {
 		return parseCRUD("pull request review", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: p.Review.Body}), nil
 	case github.PullRequestPayload:
 		p := payload.(github.PullRequestPayload)
-		return parseCRUD("pull request", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: p.PullRequest.Head.Label}), nil
+		body := fmt.Sprintf("Additions: %d Deletions: %d", p.PullRequest.Additions, p.PullRequest.Deletions)
+		return parseCRUD("pull request", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: body}), nil
 	case github.IssuesPayload:
 		p := payload.(github.IssuesPayload)
 		return parseCRUD("issue", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.Issue.Title, HTMLURL: p.Issue.HTMLURL}), nil
