@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /go/src/github.com/berserktech/telebot
+    working_directory: /telebot
     steps:
       - checkout
       - restore_cache:
