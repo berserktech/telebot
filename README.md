@@ -1,4 +1,4 @@
-﻿# BerserkTech_GitHub_bot
+﻿# telebot
 Telegram Bot for our repository
 
 ## Why?
@@ -35,3 +35,13 @@ Plase make sure to check the unit tests we have so far.
 - Improve this readme.
 - Write better integration tests.
 - Get feedback.
+
+## Useful links:
+- [Enabling module support for Go v1.11 in CircleCI](https://circleci.com/blog/go-v1.11-modules-and-circleci/)
+- [GitHub REST API v3 - Event Types & Payloads](https://developer.github.com/v3/activity/events/types/)
+- [Library webhooks allows for easy receiving and parsing of GitHub,
+  Bitbucket and GitLab Webhook
+  Events](https://github.com/go-playground/webhooks)
+- [Telegram Bot API](https://core.telegram.org/bots/api)
+- [Zeit by example | Go](https://zeit.co/examples/go)
+- [Golang bindings for the Telegram Bot API](https://github.com/go-telegram-bot-api/telegram-bot-api)
