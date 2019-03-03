@@ -10,6 +10,6 @@ import (
 // PORT=3000 TELEGRAM_TOKEN="TELEGRAM_TOKEN" TELEGRAM_CHAT_ID="TELEGRAM_CHAT_ID" INTEGRATION_TEST=true go test
 func TestHandler(t *testing.T) {
 	if os.Getenv("INTEGRATION_TEST") != "" {
-		Handler(httptest.NewRecorder(), eventRequest("commit_comment"))
+		Handler(httptest.NewRecorder(), eventRequest("ping"))
 	}
 }
