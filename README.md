@@ -2,7 +2,7 @@
 
 Telegram Bot for our GitHub community 🤗
 
-<img height="500px" src="https://user-images.githubusercontent.com/417016/53698480-58cc5980-3dab-11e9-98d4-02c19b99c4e4.png">
+![](https://user-images.githubusercontent.com/417016/53699784-eca52200-3db9-11e9-9477-fd6dab0ed4d5.png)
 
 ## Index
 
