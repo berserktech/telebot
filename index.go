@@ -40,6 +40,8 @@ type Status struct {
 	HTMLURL string
 }
 
+// Receives a Sender an produces a link with that person's
+// GitHub profile.
 func formatSender(s Sender) string {
 	return fmt.Sprintf("[%s](%s)", s.Login, s.HTMLURL)
 }
@@ -55,7 +57,6 @@ func parseComment(kind string, sender Sender, comment Comment) string {
 // The messages will use a "kind" to identify the event in a humanly readable way,
 // and two structs holding the data coming from the API, a Sender and a Content.
 // The output vries if the provided Content has a Body.
-// TODO: Perhaps use a template engine.
 func parseCRUD(kind string, sender Sender, content Content) string {
 	var body string
 	if content.Body != "" {
