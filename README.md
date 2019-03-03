@@ -54,7 +54,7 @@ with each one of these events (check out the open issues!).
 
 ## How to build
 
-### Install Go.
+### Install Go
 
 Make sure you have Go installed: <https://golang.org/doc/install>.
 You can also use @[stefanmaric](https://github.com/stefanmaric)'s
