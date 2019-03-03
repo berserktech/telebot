@@ -1,12 +1,14 @@
 {
-    "version": 2,
-    "name": "go",
-    "builds": [{
-        "src": "index.go",
-        "use": "@now/go"
-    }],
-    "env": {
-        "TELEGRAM_TOKEN": "@telegram-token",
-        "TELEGRAM_CHAT_ID": "@telegram-chat-id"
+  "version": 2,
+  "name": "go",
+  "builds": [
+    {
+      "src": "index.go",
+      "use": "@now/go"
     }
+  ],
+  "env": {
+    "TELEGRAM_TOKEN": "@telegram-token",
+    "TELEGRAM_CHAT_ID": "@telegram-chat-id"
+  }
 }
