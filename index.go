@@ -25,33 +25,66 @@ type Comment struct {
 	HTMLURL string
 }
 
+type Content struct {
+	Action  string
+	Title   string
+	HTMLURL string
+}
+
 func parseComment(kind string, sender Sender, comment Comment) string {
-	fmt.Println(kind)
 	return fmt.Sprintf("%s commented one %s with:\n\n%s\n\n%s", sender.Login, kind, comment.Body, comment.HTMLURL)
+}
+
+func parseContent(kind string, sender Sender, content Content) string {
+	return fmt.Sprintf("%s %s the %s: %s %s", sender.Login, content.Action, kind, content.Title, content.HTMLURL)
 }
 
 // Taken from: https://github.com/go-playground/webhooks/blob/v5/README.md
 func getMessage(r *http.Request, secret string) (string, error) {
 	// Handling the Github event
 	hook, _ := github.New(github.Options.Secret(secret))
-	payload, err := hook.Parse(r, github.CommitCommentEvent, github.IssueCommentEvent, github.PullRequestReviewCommentEvent)
+	payload, err := hook.Parse(r,
+		// Comment events
+		github.CommitCommentEvent,
+		github.IssueCommentEvent,
+		github.PullRequestReviewCommentEvent,
+		// Events that are more relevant by their action
+		github.PullRequestReviewEvent,
+		github.PullRequestEvent,
+		github.IssuesEvent,
+		// Misc
+		github.PingEvent)
 
 	if err != nil {
 		return "", err
 	}
 
 	switch payload.(type) {
+	// Comment events
 	case github.CommitCommentPayload:
 		p := payload.(github.CommitCommentPayload)
 		return parseComment("commit", Sender{Login: p.Sender.Login}, Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}), nil
-
 	case github.IssueCommentPayload:
 		p := payload.(github.IssueCommentPayload)
 		return parseComment("issue", Sender{Login: p.Sender.Login}, Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}), nil
-
 	case github.PullRequestReviewCommentPayload:
 		p := payload.(github.PullRequestReviewCommentPayload)
 		return parseComment("pull request", Sender{Login: p.Sender.Login}, Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}), nil
+
+		// Events that are more relevant by their action
+	case github.PullRequestReviewPayload:
+		p := payload.(github.PullRequestReviewPayload)
+		return parseContent("pull request review", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL}), nil
+	case github.PullRequestPayload:
+		p := payload.(github.PullRequestPayload)
+		return parseContent("pull request", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL}), nil
+	case github.IssuesPayload:
+		p := payload.(github.IssuesPayload)
+		return parseContent("issue", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.Issue.Title, HTMLURL: p.Issue.HTMLURL}), nil
+
+		// Misc
+	case github.PingPayload:
+		return "ping", nil
 	}
 
 	return "", nil

@@ -32,7 +32,7 @@ func TestGetMessageCommitComment(t *testing.T) {
 	assert.Equal(t, expected, message)
 }
 
-func TestGetIssueComment(t *testing.T) {
+func TestGetMessageIssueComment(t *testing.T) {
 	message, err := getMessage(eventRequest("issue_comment"), "")
 	assert.Nil(t, err)
 
@@ -40,7 +40,7 @@ func TestGetIssueComment(t *testing.T) {
 	assert.Equal(t, expected, message)
 }
 
-func TestGetPullRequestReviewComment(t *testing.T) {
+func TestGetMessagePullRequestReviewComment(t *testing.T) {
 	message, err := getMessage(eventRequest("pull_request_review_comment"), "")
 	assert.Nil(t, err)
 
@@ -48,7 +48,40 @@ func TestGetPullRequestReviewComment(t *testing.T) {
 	assert.Equal(t, expected, message)
 }
 
+func TestGetMessagePullRequestReview(t *testing.T) {
+	message, err := getMessage(eventRequest("pull_request_review"), "")
+	assert.Nil(t, err)
+
+	expected := "Codertocat submitted the pull request review: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1"
+	assert.Equal(t, expected, message)
+}
+
+func TestGetMessagePullRequest(t *testing.T) {
+	message, err := getMessage(eventRequest("pull_request"), "")
+	assert.Nil(t, err)
+
+	expected := "Codertocat closed the pull request: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1"
+	assert.Equal(t, expected, message)
+}
+
+func TestGetMessageIssues(t *testing.T) {
+	message, err := getMessage(eventRequest("issues"), "")
+	assert.Nil(t, err)
+
+	expected := "Codertocat edited the issue: Spelling error in the README file https://github.com/Codertocat/Hello-World/issues/2"
+	assert.Equal(t, expected, message)
+}
+
 func TestPing(t *testing.T) {
-	_, err := getMessage(eventRequest("ping"), "")
+	message, err := getMessage(eventRequest("ping"), "")
+	assert.Nil(t, err)
+
+	expected := "ping"
+	assert.Equal(t, expected, message)
+}
+
+// We're not subscribing to this event
+func TestOrgBlockEventFailed(t *testing.T) {
+	_, err := getMessage(eventRequest("org_block"), "")
 	assert.Equal(t, err, errors.New("event not defined to be parsed"))
 }
