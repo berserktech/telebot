@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"gopkg.in/go-playground/webhooks.v5/github"
 	"log"
 	"net/http"
 	"os"
-	"fmt"
-	"gopkg.in/go-playground/webhooks.v5/github"
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"strconv"
 )
 
@@ -27,7 +27,7 @@ type Comment struct {
 
 func parseComment(kind string, sender Sender, comment Comment) string {
 	fmt.Println(kind)
-	return fmt.Sprintf("*%s commented one %s:* %s %s", sender.Login, kind, comment.Body, comment.HTMLURL)
+	return fmt.Sprintf("%s commented one %s with:\n\n%s\n\n%s", sender.Login, kind, comment.Body, comment.HTMLURL)
 }
 
 // Taken from: https://github.com/go-playground/webhooks/blob/v5/README.md
@@ -71,7 +71,8 @@ func sendMessage(message string, token string, chatId string) error {
 	if err != nil {
 		return err
 	}
-	msg := tgbotapi.NewMessage(i64ID, message)
+	// All group chat IDs are negative numbers, apparently
+	msg := tgbotapi.NewMessage(-i64ID, message)
 	bot.Send(msg)
 	return nil
 }
@@ -81,7 +82,7 @@ func sendMessage(message string, token string, chatId string) error {
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	// Getting the message from GitHub
-	secret := os.Getenv("GITHUB_SECRET")
+	secret := os.Getenv("GITHUB_CLIENT_SECRET")
 	message, err := getMessage(r, secret)
 	if err != nil {
 		log.Panic(err)

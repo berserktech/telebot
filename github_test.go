@@ -19,6 +19,7 @@ func eventRequest(event string) *http.Request {
 
 	request := httptest.NewRequest("POST", "/", reader)
 	request.Header.Add("X-GitHub-Event", event)
+	request.Header.Add("X-Hub-Signature", os.Getenv("GITHUB_SECRET"))
 	return request
 }
 
@@ -26,7 +27,7 @@ func TestGetMessageCommitComment(t *testing.T) {
 	message, err := getMessage(eventRequest("commit_comment"), "")
 	assert.Nil(t, err)
 
-	expected := "*Codertocat commented one commit:* This is a really good change! :+1: https://github.com/Codertocat/Hello-World/commit/a10867b14bb761a232cd80139fbd4c0d33264240#commitcomment-29186860"
+	expected := "Codertocat commented one commit with:\n\nThis is a really good change! :+1:\n\nhttps://github.com/Codertocat/Hello-World/commit/a10867b14bb761a232cd80139fbd4c0d33264240#commitcomment-29186860"
 	assert.Equal(t, expected, message)
 }
 
@@ -34,7 +35,7 @@ func TestGetIssueComment(t *testing.T) {
 	message, err := getMessage(eventRequest("issue_comment"), "")
 	assert.Nil(t, err)
 
-	expected := "*Codertocat commented one issue:* You are totally right! I'll get this fixed right away. https://github.com/Codertocat/Hello-World/issues/2#issuecomment-393304133"
+	expected := "Codertocat commented one issue with:\n\nYou are totally right! I'll get this fixed right away.\n\nhttps://github.com/Codertocat/Hello-World/issues/2#issuecomment-393304133"
 	assert.Equal(t, expected, message)
 }
 
@@ -42,6 +43,6 @@ func TestGetPullRequestReviewComment(t *testing.T) {
 	message, err := getMessage(eventRequest("pull_request_review_comment"), "")
 	assert.Nil(t, err)
 
-	expected := "*Codertocat commented one pull request:* Maybe you should use more emojji on this line. https://github.com/Codertocat/Hello-World/pull/1#discussion_r191908831"
+	expected := "Codertocat commented one pull request with:\n\nMaybe you should use more emojji on this line.\n\nhttps://github.com/Codertocat/Hello-World/pull/1#discussion_r191908831"
 	assert.Equal(t, expected, message)
 }
