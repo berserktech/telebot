@@ -11,7 +11,8 @@ import (
 )
 
 // IMPORTANT:
-// I tried to separate this in several files, but Zeit didn't let me
+// I tried to separate this in several files, but Zeit didn't let me.
+// I'll continue investigating later.
 
 // GitHub related code
 // ===================
@@ -29,14 +30,28 @@ type Content struct {
 	Action  string
 	Title   string
 	HTMLURL string
+	Body    string
 }
 
+// Builds up messages that follow a common pattern around a Comment struct.
+// The messages will use a "kind" to identify the event in a humanly readable way,
+// and two structs holding the data coming from the API, a Sender and a Comment.
+// TODO: Perhaps use a template engine.
 func parseComment(kind string, sender Sender, comment Comment) string {
-	return fmt.Sprintf("%s commented one %s with:\n\n%s\n\n%s", sender.Login, kind, comment.Body, comment.HTMLURL)
+	return fmt.Sprintf("*%s* commented one %s with:\n\n%s\n\n%s", sender.Login, kind, comment.Body, comment.HTMLURL)
 }
 
-func parseContent(kind string, sender Sender, content Content) string {
-	return fmt.Sprintf("%s %s the %s: %s %s", sender.Login, content.Action, kind, content.Title, content.HTMLURL)
+// Builds up messages that have CRUD-like actions
+// The messages will use a "kind" to identify the event in a humanly readable way,
+// and two structs holding the data coming from the API, a Sender and a Content.
+// The output vries if the provided Content has a Body.
+// TODO: Perhaps use a template engine.
+func parseCRUD(kind string, sender Sender, content Content) string {
+	var body string
+	if content.Body != "" {
+		body = fmt.Sprintf(" Details:\n%s", content.Body)
+	}
+	return fmt.Sprintf("*%s* %s the %s: %s %s%s", sender.Login, content.Action, kind, content.Title, content.HTMLURL, body)
 }
 
 // Taken from: https://github.com/go-playground/webhooks/blob/v5/README.md
@@ -48,7 +63,7 @@ func getMessage(r *http.Request, secret string) (string, error) {
 		github.CommitCommentEvent,
 		github.IssueCommentEvent,
 		github.PullRequestReviewCommentEvent,
-		// Events that are more relevant by their action
+		// Events that have CRUD-like actions
 		github.PullRequestReviewEvent,
 		github.PullRequestEvent,
 		github.IssuesEvent,
@@ -58,6 +73,11 @@ func getMessage(r *http.Request, secret string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	// NOTES:
+	// - The cases can't fallthrough when they belong to a switch over types.
+	// - I'm trying to pass objects of a well defined struct to make the parsing functions smaller,
+	//   since this switch is pretty verbose anyway.
 
 	switch payload.(type) {
 	// Comment events
@@ -71,18 +91,19 @@ func getMessage(r *http.Request, secret string) (string, error) {
 		p := payload.(github.PullRequestReviewCommentPayload)
 		return parseComment("pull request", Sender{Login: p.Sender.Login}, Comment{Body: p.Comment.Body, HTMLURL: p.Comment.HTMLURL}), nil
 
-		// Events that are more relevant by their action
+		// Events that have CRUD-like actions
 	case github.PullRequestReviewPayload:
 		p := payload.(github.PullRequestReviewPayload)
-		return parseContent("pull request review", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL}), nil
+		return parseCRUD("pull request review", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: p.Review.Body}), nil
 	case github.PullRequestPayload:
 		p := payload.(github.PullRequestPayload)
-		return parseContent("pull request", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL}), nil
+		return parseCRUD("pull request", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: p.PullRequest.Head.Label}), nil
 	case github.IssuesPayload:
 		p := payload.(github.IssuesPayload)
-		return parseContent("issue", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.Issue.Title, HTMLURL: p.Issue.HTMLURL}), nil
+		return parseCRUD("issue", Sender{Login: p.Sender.Login}, Content{Action: p.Action, Title: p.Issue.Title, HTMLURL: p.Issue.HTMLURL}), nil
 
 		// Misc
+		// Ping is simply so that we can run a minimal test.
 	case github.PingPayload:
 		return "ping", nil
 	}
@@ -94,6 +115,7 @@ func getMessage(r *http.Request, secret string) (string, error) {
 // =====================
 
 // Based on: https://github.com/go-telegram-bot-api/telegram-bot-api
+// TODO: The configuration we set here is probably better in a configuration file.
 func sendMessage(message string, token string, chatId string) error {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
@@ -106,6 +128,8 @@ func sendMessage(message string, token string, chatId string) error {
 	}
 	// All group chat IDs are negative numbers, apparently
 	msg := tgbotapi.NewMessage(-i64ID, message)
+	msg.ParseMode = "Markdown"
+	msg.DisableWebPagePreview = true
 	bot.Send(msg)
 	return nil
 }
@@ -113,6 +137,10 @@ func sendMessage(message string, token string, chatId string) error {
 // Handler
 // =======
 
+// IMPORTANT: the "println" calls in this function are mainly because I was
+// struggling trying to set up the environment variables on Zeit.co
+// Let's leave them where they are for now since we might continue playing around with the
+// hosting platform. We can improve them, for sure.
 func Handler(w http.ResponseWriter, r *http.Request) {
 	// Getting the message from GitHub
 	secret := os.Getenv("GITHUB_CLIENT_SECRET")
@@ -127,7 +155,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	token := os.Getenv("TELEGRAM_TOKEN")
 	if token == "" {
-			println("No token received")
+		println("No token received")
 	}
 
 	// How to get the TELEGRAM_CHAT_ID: https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id
