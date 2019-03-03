@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache
+      - run: go get github.com/go-telegram-bot-api/telegram-bot-api
+      - run: go get github.com/stretchr/testify
+      - run: go get github.com/technoweenie/multipartstreamer
+      - run: go get gopkg.in/go-playground/webhooks.v5
+      - save_cache:
+          key: dependency-cache
+          paths:
+            - "/go/pkg"
+      - run:
+          name: test
+          command: go test

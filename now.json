@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "name": "telebot",
+  "builds": [
+    {
+      "src": "index.go",
+      "use": "@now/go"
+    }
+  ],
+  "env": {
+    "TELEGRAM_TOKEN": "@telegram-token",
+    "TELEGRAM_CHAT_ID": "@telegram-chat-id"
+  }
+}
