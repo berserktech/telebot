@@ -85,7 +85,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	secret := os.Getenv("GITHUB_CLIENT_SECRET")
 	message, err := getMessage(r, secret)
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
+		fmt.Fprintf(w, "%s", err)
+		return
 	}
 
 	token := os.Getenv("TELEGRAM_TOKEN")
@@ -95,6 +97,10 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	// Sending the message to Telegram
 	if err := sendMessage(message, token, chatId); err != nil {
-		log.Panic(err)
+		log.Print(err)
+		fmt.Fprintf(w, "%s", err)
+		return
 	}
+
+	fmt.Fprintf(w, "Sent:\n%s", message)
 }

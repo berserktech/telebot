@@ -1,0 +1,23 @@
+{
+  "zen": "Favor focus over features.",
+  "hook_id": 91332111,
+  "hook": {
+    "type": "App",
+    "id": 91332111,
+    "name": "web",
+    "active": true,
+    "events": [
+      "commit_comment",
+      "issue_comment",
+      "pull_request_review_comment"
+    ],
+    "config": {
+      "content_type": "json",
+      "insecure_ssl": "0",
+      "url": "https://zeit.co/sadasant/go/deployment/8q5cgwifp"
+    },
+    "updated_at": "2019-03-03T08:04:49Z",
+    "created_at": "2019-03-03T08:04:49Z",
+    "app_id": 26353
+  }
+}

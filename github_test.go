@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -45,4 +46,9 @@ func TestGetPullRequestReviewComment(t *testing.T) {
 
 	expected := "Codertocat commented one pull request with:\n\nMaybe you should use more emojji on this line.\n\nhttps://github.com/Codertocat/Hello-World/pull/1#discussion_r191908831"
 	assert.Equal(t, expected, message)
+}
+
+func TestPing(t *testing.T) {
+	_, err := getMessage(eventRequest("ping"), "")
+	assert.Equal(t, err, errors.New("event not defined to be parsed"))
 }
