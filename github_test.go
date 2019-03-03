@@ -28,7 +28,7 @@ func TestGetMessageCommitComment(t *testing.T) {
 	message, err := getMessage(eventRequest("commit_comment"), "")
 	assert.Nil(t, err)
 
-	expected := "*[Codertocat](https://github.com/Codertocat)* commented one commit with:\n\nThis is a really good change! :+1:\n\nhttps://github.com/Codertocat/Hello-World/commit/a10867b14bb761a232cd80139fbd4c0d33264240#commitcomment-29186860"
+	expected := "[Codertocat](https://github.com/Codertocat) commented one commit with:\n\nThis is a really good change! :+1:\n\nhttps://github.com/Codertocat/Hello-World/commit/a10867b14bb761a232cd80139fbd4c0d33264240#commitcomment-29186860"
 	assert.Equal(t, expected, message)
 }
 
@@ -36,7 +36,7 @@ func TestGetMessageIssueComment(t *testing.T) {
 	message, err := getMessage(eventRequest("issue_comment"), "")
 	assert.Nil(t, err)
 
-	expected := "*[Codertocat](https://github.com/Codertocat)* commented one issue with:\n\nYou are totally right! I'll get this fixed right away.\n\nhttps://github.com/Codertocat/Hello-World/issues/2#issuecomment-393304133"
+	expected := "[Codertocat](https://github.com/Codertocat) commented one issue with:\n\nYou are totally right! I'll get this fixed right away.\n\nhttps://github.com/Codertocat/Hello-World/issues/2#issuecomment-393304133"
 	assert.Equal(t, expected, message)
 }
 
@@ -44,7 +44,7 @@ func TestGetMessagePullRequestReviewComment(t *testing.T) {
 	message, err := getMessage(eventRequest("pull_request_review_comment"), "")
 	assert.Nil(t, err)
 
-	expected := "*[Codertocat](https://github.com/Codertocat)* commented one pull request with:\n\nMaybe you should use more emojji on this line.\n\nhttps://github.com/Codertocat/Hello-World/pull/1#discussion_r191908831"
+	expected := "[Codertocat](https://github.com/Codertocat) commented one pull request with:\n\nMaybe you should use more emojji on this line.\n\nhttps://github.com/Codertocat/Hello-World/pull/1#discussion_r191908831"
 	assert.Equal(t, expected, message)
 }
 
@@ -52,7 +52,7 @@ func TestGetMessagePullRequestReview(t *testing.T) {
 	message, err := getMessage(eventRequest("pull_request_review"), "")
 	assert.Nil(t, err)
 
-	expected := "*[Codertocat](https://github.com/Codertocat)* submitted the pull request review: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1"
+	expected := "[Codertocat](https://github.com/Codertocat) submitted the pull request review: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1"
 	assert.Equal(t, expected, message)
 }
 
@@ -60,7 +60,7 @@ func TestGetMessagePullRequest(t *testing.T) {
 	message, err := getMessage(eventRequest("pull_request"), "")
 	assert.Nil(t, err)
 
-	expected := "*[Codertocat](https://github.com/Codertocat)* closed the pull request: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1 Details:\nAdditions: 1 Deletions: 1"
+	expected := "[Codertocat](https://github.com/Codertocat) closed the pull request: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1 Details:\nAdditions: 1 Deletions: 1"
 	assert.Equal(t, expected, message)
 }
 
@@ -68,7 +68,7 @@ func TestGetMessageIssues(t *testing.T) {
 	message, err := getMessage(eventRequest("issues"), "")
 	assert.Nil(t, err)
 
-	expected := "*[Codertocat](https://github.com/Codertocat)* edited the issue: Spelling error in the README file https://github.com/Codertocat/Hello-World/issues/2"
+	expected := "[Codertocat](https://github.com/Codertocat) edited the issue: Spelling error in the README file https://github.com/Codertocat/Hello-World/issues/2"
 	assert.Equal(t, expected, message)
 }
 
@@ -76,7 +76,7 @@ func TestGetMessageStatus(t *testing.T) {
 	message, err := getMessage(eventRequest("status"), "")
 	assert.Nil(t, err)
 
-	expected := "`success`: [Initial commit](https://github.com/Codertocat/Hello-World/commit/a10867b14bb761a232cd80139fbd4c0d33264240) by *[Codertocat](https://github.com/Codertocat)*"
+	expected := "`success`: [Initial commit](https://github.com/Codertocat/Hello-World/commit/a10867b14bb761a232cd80139fbd4c0d33264240) by [Codertocat](https://github.com/Codertocat)"
 	assert.Equal(t, expected, message)
 }
 

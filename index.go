@@ -41,7 +41,7 @@ type Status struct {
 }
 
 func formatSender(s Sender) string {
-	return fmt.Sprintf("*[%s](%s)*", s.Login, s.HTMLURL)
+	return fmt.Sprintf("[%s](%s)", s.Login, s.HTMLURL)
 }
 
 // Builds up messages that follow a common pattern around a Comment struct.
