@@ -60,7 +60,7 @@ func TestGetMessagePullRequest(t *testing.T) {
 	message, err := getMessage(eventRequest("pull_request"), "")
 	assert.Nil(t, err)
 
-	expected := "*Codertocat* closed the pull request: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1 Details:\nCodertocat:changes"
+	expected := "*Codertocat* closed the pull request: Update the README with new information https://github.com/Codertocat/Hello-World/pull/1 Details:\nAdditions: 1 Deletions: 1"
 	assert.Equal(t, expected, message)
 }
 
