@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"gopkg.in/go-playground/webhooks.v5/github"
@@ -56,7 +57,7 @@ func parseComment(kind string, sender Sender, comment Comment) string {
 // Builds up messages that have CRUD-like actions
 // The messages will use a "kind" to identify the event in a humanly readable way,
 // and two structs holding the data coming from the API, a Sender and a Content.
-// The output vries if the provided Content has a Body.
+// The output varies if the provided Content has a Body.
 func parseCRUD(kind string, sender Sender, content Content) string {
 	var body string
 	if content.Body != "" {
@@ -65,8 +66,41 @@ func parseCRUD(kind string, sender Sender, content Content) string {
 	return fmt.Sprintf("%s %s the %s: %s %s%s", formatSender(sender), content.Action, kind, content.Title, content.HTMLURL, body)
 }
 
+// Builds up messages that receive Status structs
 func parseStatus(sender Sender, status Status) string {
 	return fmt.Sprintf("`%s`: [%s](%s) by %s", status.State, status.Message, status.HTMLURL, formatSender(sender))
+}
+
+// Filters by Status and Content properties
+func notAllowedStatus(status Status) error {
+	if status.State == "pending" {
+		return errors.New("Not Allowed: status pending")
+	}
+	return nil
+}
+func notAllowedContent(status Content) error {
+	if status.Action == "labeled" {
+		return errors.New("Not Allowed: action labeled")
+	}
+	if status.Action == "unlabeled" {
+		return errors.New("Not Allowed: action unlabeled")
+	}
+	if status.Action == "assigned" {
+		return errors.New("Not Allowed: action assigned")
+	}
+	if status.Action == "unassigned" {
+		return errors.New("Not Allowed: action unassigned")
+	}
+	if status.Action == "review_requested" {
+		return errors.New("Not Allowed: action review_requested")
+	}
+	if status.Action == "review_request_removed" {
+		return errors.New("Not Allowed: action review_request_removed")
+	}
+	if status.Action == "edited" {
+		return errors.New("Not Allowed: action edited")
+	}
+	return nil
 }
 
 // Taken from: https://github.com/go-playground/webhooks/blob/v5/README.md
@@ -118,24 +152,36 @@ func getMessage(r *http.Request, secret string) (string, error) {
 		p := payload.(github.PullRequestReviewPayload)
 		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
 		content := Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: p.Review.Body}
+		if err := notAllowedContent(content); err != nil {
+			return "", err
+		}
 		return parseCRUD("pull request review", sender, content), nil
 	case github.PullRequestPayload:
 		p := payload.(github.PullRequestPayload)
 		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
 		body := fmt.Sprintf("Additions: %d Deletions: %d", p.PullRequest.Additions, p.PullRequest.Deletions)
 		content := Content{Action: p.Action, Title: p.PullRequest.Title, HTMLURL: p.PullRequest.HTMLURL, Body: body}
+		if err := notAllowedContent(content); err != nil {
+			return "", err
+		}
 		return parseCRUD("pull request", sender, content), nil
 	case github.IssuesPayload:
 		p := payload.(github.IssuesPayload)
 		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
 		content := Content{Action: p.Action, Title: p.Issue.Title, HTMLURL: p.Issue.HTMLURL}
+		if err := notAllowedContent(content); err != nil {
+			return "", err
+		}
 		return parseCRUD("issue", sender, content), nil
 
-		// Misc
+		// Status are events triggered by commits
 	case github.StatusPayload:
 		p := payload.(github.StatusPayload)
 		sender := Sender{Login: p.Sender.Login, HTMLURL: p.Sender.HTMLURL}
 		status := Status{State: p.State, Message: p.Commit.Commit.Message, HTMLURL: p.Commit.HTMLURL}
+		if err := notAllowedStatus(status); err != nil {
+			return "", err
+		}
 		return parseStatus(sender, status), nil
 		// Ping is simply so that we can run a minimal test.
 	case github.PingPayload:

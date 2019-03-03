@@ -52,6 +52,13 @@ in mind that some line breaks won't appear in this table):
 We should definitely add more and improve what we're currently doing
 with each one of these events (check out the open issues!).
 
+Some of the events are filtered. In detail:
+
+- `status` if they have state equal to `pending`.
+- `issues` if they have action equal to `labeled`, `unlabeled`,
+  `assigned`, `unassigned`, `review_requested`,
+  `review_request_removed` or `edited`.
+
 ## How to build
 
 ### Install Go

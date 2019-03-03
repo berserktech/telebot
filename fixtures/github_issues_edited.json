@@ -1,5 +1,5 @@
 {
-  "action": "opened",
+  "action": "edited",
   "issue": {
     "url": "https://api.github.com/repos/Codertocat/Hello-World/issues/2",
     "repository_url": "https://api.github.com/repos/Codertocat/Hello-World",
