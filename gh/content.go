@@ -31,7 +31,8 @@ func (c Content) NotAllowed() error {
 		"unassigned",
 		"review_requested",
 		"review_request_removed",
-		"edited":
+		"edited",
+		"synchronized":
 		return fmt.Errorf("gh: not allowed action, %s", c.Action)
 	}
 
