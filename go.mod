@@ -1,10 +1,8 @@
-module github.com/berserktech/telebot
+module github.com/berserktech/telebot/handler
 
 go 1.12
 
 require (
-	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
-	github.com/stretchr/testify v1.3.0
-	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	gopkg.in/go-playground/webhooks.v5 v5.6.0
+  github.com/berserktech/telebot/gh 4f97aadeb49d869f01325c0ce7daa6e114cb9047
+  github.com/berserktech/telebot/tg 4f97aadeb49d869f01325c0ce7daa6e114cb9047
 )
