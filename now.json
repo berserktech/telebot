@@ -7,6 +7,11 @@
       "use": "@now/go"
     }
   ],
+  "build": {
+    "env": {
+      "GO111MODULE": "on"
+    }
+  },
   "env": {
     "TELEGRAM_TOKEN": "@telegram-token",
     "TELEGRAM_CHAT_ID": "@telegram-chat-id"
