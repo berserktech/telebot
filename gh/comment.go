@@ -7,7 +7,7 @@ type Comment struct {
 	HTMLURL string
 }
 
-// Message returns a string. // TODO finish this comment
+// Returns a formatted message saying who commented what, and where
 func (c Comment) Format(kind string, s Sender) string {
 	return fmt.Sprintf(`%s commented one %s with:
 
