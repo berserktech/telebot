@@ -3,7 +3,7 @@
   "name": "telebot",
   "builds": [
     {
-      "src": "index.go",
+      "src": "handler/handler.go",
       "use": "@now/go"
     }
   ],
