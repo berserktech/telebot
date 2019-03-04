@@ -1,7 +1,7 @@
-github.com/berserktech/telebot/gh v0.0.0-20190304061117-f7784a1e79fe h1:KMkoufCqNrvUgF0uK50cCdqyBvycCJ3ErR9eWp3VAh8=
-github.com/berserktech/telebot/gh v0.0.0-20190304061117-f7784a1e79fe/go.mod h1:+JYyEG3Yiew/VkGIxDGMQslPsVdDixTNNUwVbXSg900=
-github.com/berserktech/telebot/tg v0.0.0-20190304061117-f7784a1e79fe h1:9jd2Ibxc4lGw0eq/wGtOkEueJkNj5E6JjQVQvJ2z1gg=
-github.com/berserktech/telebot/tg v0.0.0-20190304061117-f7784a1e79fe/go.mod h1:78iOy05ugkI8spDi7C6dXr6uUzvrPM4pi2nELQO2xs8=
+github.com/berserktech/telebot/gh v0.0.0-20190304063209-cc9f5471df66 h1:TmychoDBPYyAy1coDZxck64Gao6HOzBv5+/qAeXaczs=
+github.com/berserktech/telebot/gh v0.0.0-20190304063209-cc9f5471df66/go.mod h1:+JYyEG3Yiew/VkGIxDGMQslPsVdDixTNNUwVbXSg900=
+github.com/berserktech/telebot/tg v0.0.0-20190304063209-cc9f5471df66 h1:GsV6h91Shbew7moRIuzoj/P+ia0HxIHOybycAUJwXBI=
+github.com/berserktech/telebot/tg v0.0.0-20190304063209-cc9f5471df66/go.mod h1:78iOy05ugkI8spDi7C6dXr6uUzvrPM4pi2nELQO2xs8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible h1:2cauKuaELYAEARXRkq2LrJ0yDDv1rW7+wrTEdVL3uaU=
 github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible/go.mod h1:qf9acutJ8cwBUhm1bqgz6Bei9/C/c93FPDljKWwsOgM=
