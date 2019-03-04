@@ -16,5 +16,8 @@ jobs:
           paths:
             - "/go/pkg"
       - run:
-          name: test
-          command: go test
+          name: tests
+          command: ./test.bash
+      - run:
+          name: fmt
+          command: ./fmt-check.bash
