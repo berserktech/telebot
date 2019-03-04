@@ -3,7 +3,7 @@ module github.com/berserktech/telebot
 go 1.12
 
 require (
-	github.com/berserktech/telebot/gh v0.0.0-20190304063209-cc9f5471df66
-	github.com/berserktech/telebot/handler v0.0.0-20190304063209-cc9f5471df66
-	github.com/berserktech/telebot/tg v0.0.0-20190304063209-cc9f5471df66
+	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
+	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	gopkg.in/go-playground/webhooks.v5 v5.6.0
 )
