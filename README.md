@@ -71,6 +71,17 @@ You can also use @[stefanmaric](https://github.com/stefanmaric)'s
 
 Make an issue or a pull request! :) Remember to `fmt` your `.go`s 😆
 
+There are also some useful commands at the root of this directory.
+They're bash executables since that's how [Go's
+source](https://github.com/golang/go/tree/master/src) handles similar
+scripts. The list follows:
+
+- `test.bash`: Runs `go test` in all the submodules of this repo.
+- `fmt.bash`: Runs `go fmt` in all the submodules of this repo.
+- `fmt-check.bash`: Runs `go fmt -l .` in all the submodules of this
+  repo. If it finds files that don't have the proper formatting, it
+  will exit with status code 1. We use this one for CI purposes
+
 ## How to deploy
 
 ### Creating a Telegram Bot
