@@ -57,7 +57,7 @@ Some of the events are filtered. In detail:
 - `status` if they have state equal to `pending`.
 - Any other event if they have an action property assigned to
   `labeled`, `unlabeled`, `assigned`, `unassigned`,
-  `review_requested`, `review_request_removed` or `edited`.
+  `review_requested`, `review_request_removed`, `edited` or `synchronize`
 
 ## How to build
 
