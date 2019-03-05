@@ -3,8 +3,8 @@
   "name": "telebot",
   "builds": [
     {
-      "src": "handler/handler.go",
-      "use": "@now/go"
+      "src": "index.go",
+      "use": "@now/go@canary"
     }
   ],
   "build": {
