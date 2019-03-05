@@ -11,7 +11,7 @@
   * `fmt-check.bash`: Runs `go fmt -l .` in all the submodules of this
     repo. If it finds files that don't have the proper formatting, it
     will exit with status code 1. We use this one for CI purposes
-* Muted `synchronized` actions (specifically for PullRequestEvents).
+* Muted `synchronize` actions (specifically for PullRequestEvents).
 * Made sure both CircleCI and Zeit worked fine with this new
   file structure.
 
