@@ -71,23 +71,16 @@ You can also use @[stefanmaric](https://github.com/stefanmaric)'s
 
 Make an issue or a pull request! :) Remember to `fmt` your `.go`s 😆
 
-There are also some useful commands at the root of this directory.
-They're bash executables since that's how [Go's
-source](https://github.com/golang/go/tree/master/src) handles similar
-scripts. The list follows:
+### To run our tests
 
-- `test.bash`: Runs `go test` in all the submodules of this repo.
-- `fmt.bash`: Runs `go fmt` in all the submodules of this repo.
-- `fmt-check.bash`: Runs `go fmt -l .` in all the submodules of this
-  repo. If it finds files that don't have the proper formatting, it
-  will exit with status code 1. We use this one for CI purposes
-- `mod-update.bash`: Updates all the versions of local dependencies of
-  this module to the latest hash in your local git. Make sure to have
-  pushed it. To reconcile with Go's authomatic changes, it runs
-  `fmt.bash` at the end, which will also check if the version is
-  available through the network. To use this, you must pass a
-  git-reference to update to. You can use `HEAD`, as in the following
-  example: `./mod-update.bash HEAD~1`.
+Execute the following command: `go test ./...`
+
+### To check wether your code is formatted
+
+We have a simple bash script called `fmt-check.bash`. It runs `go fmt -l .`
+at the root and in all the submodules of this repo. If it finds files
+that don't have the proper formatting, it will exit with status code 1.
+We use this script mainly for CI purposes.
 
 ## How to deploy
 
