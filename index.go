@@ -47,3 +47,5 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "Sent:\n%s", message)
 }
+
+func main() {}
